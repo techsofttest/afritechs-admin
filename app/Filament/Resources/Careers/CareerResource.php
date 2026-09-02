@@ -25,6 +25,13 @@ class CareerResource extends Resource
     protected static string|UnitEnum|null $navigationGroup =
         'Content Management';
 
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return CareerForm::configure($schema);
