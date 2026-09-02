@@ -128,7 +128,6 @@ class ProductForm
                                     ->openable()
                                     ->downloadable()
                                     ->imageEditor()
-                                    ->maxSize(1024),
 
                             ])
                             ->columns(2)
@@ -228,7 +227,6 @@ class ProductForm
                                     ->openable()
                                     ->downloadable()
                                     ->imageEditor()
-                                    ->maxSize(1024)
                                     ->required()
                                     ->columnSpanFull(),
 
