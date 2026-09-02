@@ -23,6 +23,13 @@ class PageResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Content Management';
 
+    protected static bool $shouldRegisterNavigation = false;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
+
     protected static ?string $recordTitleAttribute = 'cms_title';
 
     public static function form(Schema $schema): Schema
