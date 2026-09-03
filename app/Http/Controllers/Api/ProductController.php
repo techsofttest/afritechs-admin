@@ -152,6 +152,27 @@ class ProductController extends Controller
             ];
         })->values();
 
+        if ($faqs->isEmpty()) {
+            $faqs = collect([
+                [
+                    'q' => 'Comment puis-je obtenir un devis pour ce produit ?',
+                    'a' => 'Vous pouvez cliquer sur le bouton "Faire une demande de devis" ou ajouter le produit à votre demande. Notre équipe technico-commerciale vous répondra dans les plus brefs délais.',
+                ],
+                [
+                    'q' => 'Quels sont les délais et modalités de livraison ?',
+                    'a' => 'Nous livrons nos équipements et produits dans toute la République de Guinée et la région. Les délais varient selon la disponibilité en stock et la destination.',
+                ],
+                [
+                    'q' => 'Les produits bénéficient-ils d\'une garantie et d\'un service après-vente ?',
+                    'a' => 'Oui, tous nos produits et équipements bénéficient d\'une garantie fabricant et d\'un accompagnement technique complet assuré par l\'équipe AFRI TECHS.',
+                ],
+                [
+                    'q' => 'Proposez-vous des pièces de rechange et la maintenance ?',
+                    'a' => 'Absolument. Nous fournissons des pièces de rechange d\'origine et proposons des services de maintenance préventive et corrective.',
+                ],
+            ]);
+        }
+
         // Format Variants
         $variants = $product->variants->map(function ($v) {
             return [

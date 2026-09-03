@@ -7,6 +7,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
@@ -281,6 +282,49 @@ class ProductForm
                             ->itemLabel(
                                 fn (array $state): ?string =>
                                     $state['name'] ?? 'Specification'
+                            )
+                            ->defaultItems(0)
+                            ->columnSpanFull(),
+
+                    ])
+                    ->columns(1)
+                    ->collapsible()
+                    ->columnSpanFull(),
+
+                /*
+                |--------------------------------------------------------------------------
+                | Product FAQs
+                |--------------------------------------------------------------------------
+                */
+
+                Section::make('Product FAQs')
+                    ->schema([
+
+                        Repeater::make('faqs')
+                            ->relationship('faqs')
+                            ->label('Frequently Asked Questions')
+                            ->schema([
+
+                                TextInput::make('question')
+                                    ->label('Question')
+                                    ->maxLength(255)
+                                    ->required()
+                                    ->columnSpanFull(),
+
+                                Textarea::make('answer')
+                                    ->label('Answer')
+                                    ->rows(3)
+                                    ->required()
+                                    ->columnSpanFull(),
+
+                            ])
+                            ->columns(1)
+                            ->orderColumn('sort_order')
+                            ->reorderable()
+                            ->collapsible()
+                            ->itemLabel(
+                                fn (array $state): ?string =>
+                                    $state['question'] ?? 'FAQ Item'
                             )
                             ->defaultItems(0)
                             ->columnSpanFull(),
