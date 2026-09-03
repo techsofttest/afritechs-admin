@@ -8,8 +8,10 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\Api\CustomerAuthController;
+use App\Http\Controllers\Api\PageApiController;
 
 Route::get('/home', [HomeController::class, 'index']);
+Route::get('/pages/{key}', [PageApiController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/mega-menu', [CategoryController::class, 'megaMenu']);
 
