@@ -21,6 +21,7 @@ class Product extends Model
         'title',
         'slug',
         'description',
+        'faqs',
         'image',
         'meta_title',
         'meta_desc',
@@ -33,6 +34,7 @@ class Product extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'is_flagship' => 'boolean',
+        'faqs' => 'array',
     ];
 
     /*
@@ -55,11 +57,6 @@ class Product extends Model
     {
         return $this->belongsToMany(Variant::class, 'product_variant')
             ->withTimestamps();
-    }
-
-    public function faqs(): HasMany
-    {
-        return $this->hasMany(ProductFaq::class, 'product_id');
     }
 
     public function images(): HasMany

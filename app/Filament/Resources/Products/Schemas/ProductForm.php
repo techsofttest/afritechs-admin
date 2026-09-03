@@ -301,7 +301,6 @@ class ProductForm
                     ->schema([
 
                         Repeater::make('faqs')
-                            ->relationship('faqs')
                             ->label('Frequently Asked Questions')
                             ->schema([
 
@@ -319,7 +318,6 @@ class ProductForm
 
                             ])
                             ->columns(1)
-                            ->orderColumn('sort_order')
                             ->reorderable()
                             ->collapsible()
                             ->itemLabel(

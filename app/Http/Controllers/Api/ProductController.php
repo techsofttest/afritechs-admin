@@ -115,7 +115,7 @@ class ProductController extends Controller
                     $query->where('slug', $slug_or_id);
                 }
             })
-            ->with(['category', 'brand', 'variants', 'faqs', 'images', 'specifications'])
+            ->with(['category', 'brand', 'variants', 'images', 'specifications'])
             ->first();
 
         if (!$product) {
@@ -144,34 +144,15 @@ class ProductController extends Controller
             ];
         })->values();
 
-        // Format Faqs
-        $faqs = $product->faqs->map(function ($f) {
+        // Format Faqs (from product JSON column)
+        $faqs = collect($product->faqs ?? [])->map(function ($f) {
+            $q = is_array($f) ? ($f['question'] ?? $f['q'] ?? '') : '';
+            $a = is_array($f) ? ($f['answer'] ?? $f['a'] ?? '') : '';
             return [
-                'q' => $f->question ?? $f->title,
-                'a' => $this->stripTags($f->answer ?? $f->description),
+                'q' => $q,
+                'a' => $this->stripTags($a),
             ];
-        })->values();
-
-        if ($faqs->isEmpty()) {
-            $faqs = collect([
-                [
-                    'q' => 'Comment puis-je obtenir un devis pour ce produit ?',
-                    'a' => 'Vous pouvez cliquer sur le bouton "Faire une demande de devis" ou ajouter le produit à votre demande. Notre équipe technico-commerciale vous répondra dans les plus brefs délais.',
-                ],
-                [
-                    'q' => 'Quels sont les délais et modalités de livraison ?',
-                    'a' => 'Nous livrons nos équipements et produits dans toute la République de Guinée et la région. Les délais varient selon la disponibilité en stock et la destination.',
-                ],
-                [
-                    'q' => 'Les produits bénéficient-ils d\'une garantie et d\'un service après-vente ?',
-                    'a' => 'Oui, tous nos produits et équipements bénéficient d\'une garantie fabricant et d\'un accompagnement technique complet assuré par l\'équipe AFRI TECHS.',
-                ],
-                [
-                    'q' => 'Proposez-vous des pièces de rechange et la maintenance ?',
-                    'a' => 'Absolument. Nous fournissons des pièces de rechange d\'origine et proposons des services de maintenance préventive et corrective.',
-                ],
-            ]);
-        }
+        })->filter(fn($f) => !empty($f['q']))->values();
 
         // Format Variants
         $variants = $product->variants->map(function ($v) {
