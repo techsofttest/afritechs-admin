@@ -1,5 +1,16 @@
 <x-filament::page>
 
+@php
+    $currencyCode = strtoupper($this->record->currency ?? 'EUR');
+    $currencySymbol = match($currencyCode) {
+        'EUR' => '€',
+        'USD' => '$',
+        'GBP' => '£',
+        'GNF' => 'GNF ',
+        default => ($currencyCode ? $currencyCode . ' ' : '€'),
+    };
+@endphp
+
 <style>
     .order-detail-wrapper {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -94,6 +105,7 @@
         gap: 0.75rem;
         padding: 1rem;
         border-bottom: 1px solid rgb(229, 231, 235);
+        align-items: center;
     }
 
     .dark .order-product-item {
@@ -171,7 +183,7 @@
     .order-info-value {
         font-size: 0.813rem;
         color: rgb(17, 24, 39);
-        font-weight: 505;
+        font-weight: 500;
     }
 
     .dark .order-info-value {
@@ -248,15 +260,18 @@
                                 </div>
 
                                 @if ($item->sku)
-                                    <div class="order-product-variant">
+                                    <div class="order-product-quantity" style="font-size: 0.75rem;">
                                         SKU: {{ $item->sku }}
                                     </div>
                                 @endif
+                                <div class="order-product-quantity" style="margin-top: 0.25rem;">
+                                    Qty: <strong>{{ $item->quantity }}</strong> &times; {{ $currencySymbol }}{{ number_format($item->price, 2) }}
+                                </div>
                             </div>
 
-                            <div class="order-product-price" style="display: flex; align-items: center; justify-content: center; min-width: 80px;">
-                                <div class="order-product-quantity" style="font-size: 0.95rem; font-weight: 700; color: rgb(17, 24, 39); margin: 0;">
-                                    Qty: {{ $item->quantity }}
+                            <div class="order-product-price" style="text-align: right; min-width: 100px;">
+                                <div style="font-size: 0.95rem; font-weight: 700; color: rgb(17, 24, 39);" class="dark:text-slate-100">
+                                    {{ $currencySymbol }}{{ number_format($item->subtotal ?? ($item->price * $item->quantity), 2) }}
                                 </div>
                             </div>
                         </div>
@@ -265,8 +280,50 @@
             </div>
         </div>
 
-        {{-- RIGHT COLUMN: ADDRESS CARD --}}
+        {{-- RIGHT COLUMN: ADDRESS CARD & PRICE BREAKDOWN --}}
         <div class="order-detail-main-section">
+
+            {{-- PRICE BREAKDOWN CARD --}}
+            <div class="order-detail-card">
+                <div class="order-detail-card-header">
+                    <h2 class="order-detail-card-title">Price Breakdown</h2>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <div class="order-info-row" style="display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px dashed rgb(229, 231, 235);">
+                        <span class="order-info-label">Subtotal</span>
+                        <span class="order-info-value">{{ $currencySymbol }}{{ number_format($this->record->subtotal, 2) }}</span>
+                    </div>
+
+                    @if(($this->record->discount_total ?? 0) > 0)
+                        <div class="order-info-row" style="display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px dashed rgb(229, 231, 235);">
+                            <span class="order-info-label">Discount</span>
+                            <span class="order-info-value" style="color: rgb(220, 38, 38);">-{{ $currencySymbol }}{{ number_format($this->record->discount_total, 2) }}</span>
+                        </div>
+                    @endif
+
+                    @if(($this->record->tax_total ?? 0) > 0)
+                        <div class="order-info-row" style="display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px dashed rgb(229, 231, 235);">
+                            <span class="order-info-label">Tax / VAT</span>
+                            <span class="order-info-value">{{ $currencySymbol }}{{ number_format($this->record->tax_total, 2) }}</span>
+                        </div>
+                    @endif
+
+                    @if(($this->record->shipping_total ?? 0) > 0)
+                        <div class="order-info-row" style="display: flex; justify-content: space-between; padding: 0.35rem 0; border-bottom: 1px dashed rgb(229, 231, 235);">
+                            <span class="order-info-label">Shipping</span>
+                            <span class="order-info-value">{{ $currencySymbol }}{{ number_format($this->record->shipping_total, 2) }}</span>
+                        </div>
+                    @endif
+
+                    <div class="order-info-row" style="display: flex; justify-content: space-between; padding: 0.65rem 0 0.25rem; border-top: 2px solid rgb(229, 231, 235); margin-top: 0.25rem;">
+                        <span class="order-detail-card-title" style="font-size: 0.95rem;">Total Amount</span>
+                        <span class="order-detail-card-title" style="font-size: 1.15rem; color: #0284c7;">{{ $currencySymbol }}{{ number_format($this->record->total, 2) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ADDRESS CARD --}}
             <div class="order-detail-card">
                 <div class="order-detail-card-header">
                     <h2 class="order-detail-card-title">Address & Delivery Info</h2>
@@ -291,6 +348,7 @@
                     <div>{{ $address['country'] ?? '' }} {{ $address['zip'] ?? '' }}</div>
                 </div>
             </div>
+
         </div>
 
     </div>
